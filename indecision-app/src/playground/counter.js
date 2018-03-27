@@ -1,74 +1,89 @@
-/*
-  Configuration Steps
+// /*
+//   Configuration Steps
 
-  Install babel npm install -g babel-cli
+//   Install babel npm install -g babel-cli
 
-  Initialize project
-    yarn init
+//   Initialize project
+//     yarn init
 
-  Install presets:
-    npm install --save-dev babel-cli babel-preset-react
+//   Install presets:
+//     npm install --save-dev babel-cli babel-preset-react
     
-    npm install babel-preset-env --save-dev
+//     npm install babel-preset-env --save-dev
 
 
-    Clean Install:  Remove the node_modules and run npm install
+//     Clean Install:  Remove the node_modules and run npm install
 
 
-*/
+// */
 
-
-// NOTE:  This file is compiled and saved in the root (public) directory and that is what
-//        is used by index.html
-//
-//  To Compile using babel, run the following command 
-//    babel src/app.js --out-file=public/scripts.js --presets=env,react
-//
-//  To continuously monittoring the source file and compile it every time it changes
-//    babel src/app.js --out-file=public/scripts.js --presets=env,react --watch
-  
-// Extensions for code:
-//    Babel ES6/ES7
-//    Path Intellisense
-//
-
-const appRoot = document.getElementById('app');
-
-let count = 0;
-const addOne = () => {
-  count++;
-  console.log("Count", count)
-  renderCounterApp();
-};
-
-const minusOne = () => {
-  if( count > 0 )
-    count--;
-  console.log("Minus", count)
-  renderCounterApp();
-};
-
-const resetCount = () => {
-  count = 0;
-  console.log("Resetting Count", count)
-  renderCounterApp();
-};
-
-
-console.log(count)
-
-const renderCounterApp = () =>
+/**
+ * The five steps to set the state
+ *  1- Setup default state object
+ *  2- Component rendered with default values *
+ *  3- Change state based on event such as click button
+ *  4- Component re-rendered using new state values *
+ *  5- Start again at step 3
+ * 
+ * (*) means that was automatic
+ * 
+ * If you have multiple pieces in the state, you do not need to return
+ * all of them just the ones that needs to be modified
+ */
+class Counter extends React.Component
 {
-  const templateTwo = (
-    <div>
-      <h1>Count: {count}</h1>
-      <button onClick={addOne}>+1</button>
-      <button onClick={minusOne}>-1</button>
-      <button onClick={resetCount}>Reset</button>
-    </div>
-  );
+  constructor(props)
+  {
+    super(props);
+    this.handleAddOne = this.handleAddOne.bind(this);
+    this.handleMinusOne = this.handleMinusOne.bind(this);
+    this.handleReset = this.handleReset.bind(this);
+    
+    this.state =
+    {
+      count: 0
+    }; 
+  }
+  
+  handleAddOne()
+  {
+    console.log("Adding to the counter: " + this.state.count);
+    this.setState( (prevState) =>
+    {
+      return { count: prevState.count + 1 }
+    });
+  }
 
-  ReactDOM.render(templateTwo, appRoot)
-};
+  handleMinusOne() 
+  {
+    console.log("Removing to the counter: " + this.state.count);
+    // Updates the component it does not replace it
+    this.setState((prevState) => {
+      return { count: prevState.count - 1 }
+    });
+  }
 
-renderCounterApp();
+  handleReset() 
+  {
+    console.log("Resetting to the counter: " + this.state.count);
+    // In this case we are not using the previous state so we can ignore it
+    this.setState(() => {
+      return { count: 0 }
+    });
+  }
+
+
+  render()
+  {
+    return(
+      <div>
+        <h1>Count: {this.state.count}</h1>
+        <button onClick={this.handleAddOne}>+1</button>
+        <button onClick={this.handleMinusOne}>-1</button>
+        <button onClick={this.handleReset}>reset</button>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(<Counter />, document.getElementById('app'));
