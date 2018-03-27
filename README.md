@@ -77,6 +77,68 @@ Difference between props and state in React Components
 | Comes from above                      | Defined in component itself        |
 | Can't be changed by component itself  |  Can be changed by component itself|
 
+Adding default values to a component, say Header, is as simple as adding an object similar to:
+```JavaScript
+Header.defaultProps = {
+  name1: 'value-1',
+  name2; 'value-2
+}
+```
+
+Stateless Function Components is another type of component.  They load faster than class based and are simpler to read a write.  If you create a React component and it only has the render method, then it could be a good candidate for a stateless function component.  The following example shows two equivalent components.
+
+**Class Based Component**
+```JavaScript
+class Header extends React.Component
+{
+  render()
+  {
+    console.log(this.props);
+    return (
+      <div>
+        <h1>{this.props.title}</h1>
+        <h2>{this.props.subtitle}</h2>
+      </div>
+    );
+  }
+}
+```
+
+**Stateless Functional Component**
+```JavaScript
+const Header = (props) =>
+{
+  return (
+    <div>
+      <h1>{props.title}</h1>
+      {props.subtitle && <h2>{props.subtitle}</h2>}
+    </div>
+  );
+};
+```
+
+Lifecycle Methods
+When using these methods you have access to this.props and this.state.  Here are just some of them, search for react lifecycle components
+
+* **componentDidMount()**: This is fired when the component is mount to the DOM.  Available only to class based components
+* **componentDidUpdate(prevProps, prevState)**: fire after the component update.  When the props or state updates
+* **componentWillUnmount()**:  Is called when the component is removed from the DOM
+
+Updating the state
+The following are the steps used by React to update the component state
+
+1. Setup default state object
+2. Component rendered with default values *
+3. Change state based on event such as click button
+4. Component re-rendered using new state values *
+5. Start again at step 3
+ 
+ (*) means that was automatic
+  
+ *REMEMBER*: If you have multiple pieces in the state, you do not need to return
+ all of them just the ones that needs to be modified
+ 
+
 
 ## JavaScript Notes
 

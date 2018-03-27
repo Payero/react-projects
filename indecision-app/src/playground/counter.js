@@ -1,21 +1,3 @@
-// /*
-//   Configuration Steps
-
-//   Install babel npm install -g babel-cli
-
-//   Initialize project
-//     yarn init
-
-//   Install presets:
-//     npm install --save-dev babel-cli babel-preset-react
-    
-//     npm install babel-preset-env --save-dev
-
-
-//     Clean Install:  Remove the node_modules and run npm install
-
-
-// */
 
 /**
  * The five steps to set the state
@@ -41,7 +23,7 @@ class Counter extends React.Component
     
     this.state =
     {
-      count: 0
+      count: props.count
     }; 
   }
   
@@ -68,7 +50,7 @@ class Counter extends React.Component
     console.log("Resetting to the counter: " + this.state.count);
     // In this case we are not using the previous state so we can ignore it
     this.setState(() => {
-      return { count: 0 }
+      return { count: this.props.count }
     });
   }
 
@@ -86,4 +68,8 @@ class Counter extends React.Component
   }
 }
 
-ReactDOM.render(<Counter />, document.getElementById('app'));
+Counter.defaultProps = {
+  count: 0
+};
+
+ReactDOM.render(<Counter count={10}/>, document.getElementById('app'));
