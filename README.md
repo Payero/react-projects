@@ -81,7 +81,7 @@ Adding default values to a component, say Header, is as simple as adding an obje
 ```JavaScript
 Header.defaultProps = {
   name1: 'value-1',
-  name2; 'value-2
+  name2; 'value-2'
 }
 ```
 
