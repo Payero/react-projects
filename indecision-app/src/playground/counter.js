@@ -26,7 +26,26 @@ class Counter extends React.Component
       count: props.count
     }; 
   }
-  
+
+  // fires up when the component is loaded in the browser
+  componentDidMount()
+  {
+    
+    const num = parseInt(localStorage.getItem('count'));
+    console.log("Fetching Data", num);
+    // if is a number, then store it in the state
+    if( !isNaN( num ) )
+      this.setState( () => ({ count: num }));
+  }
+
+  // gets invoked when either the props or the state is updated
+  componentDidUpdate(prevProps, prevState)
+  {
+    console.log("Saving Data");
+    if( prevState.count !== this.state.count )
+      localStorage.setItem('count', this.state.count);
+  }
+
   handleAddOne()
   {
     console.log("Adding to the counter: " + this.state.count);
@@ -72,4 +91,4 @@ Counter.defaultProps = {
   count: 0
 };
 
-ReactDOM.render(<Counter count={10}/>, document.getElementById('app'));
+ReactDOM.render(<Counter count={0}/>, document.getElementById('app'));

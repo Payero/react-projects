@@ -186,3 +186,104 @@ const square = (x) => {
 const square = (x) => x * x;
 
 ```
+
+localStorage allows you to get, set, and remove key-value String data pairs.  This is a persistent technique
+```JavaScript
+localStorage.setItem('name', 'John');
+localStorage.getItem('name');
+localStorage.removeItem('name');
+```
+
+When setting a key-value pair where the key name is the same as the variable name, it can be shorthanded as follow
+```JavaScript
+var name = 'John Doe`;
+var d1 = { 'name': name };
+var d2 = { name };
+```
+
+The order in which JavaScript files are loaded in the html files is important for dependencies.  For instance, all the react libraries need to be referenced or loaded prior the actual application using it.
+```html
+    <script src="https://unpkg.com/react@16.0.0/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16.0.0/umd/react-dom.development.js"></script>
+    <script src="/scripts/app.js"></script>
+```
+
+## Import, Export, Require
+When using require you need to assign it to a variable for example `const path = require('path');`.  In this case all the exported methods in path will be accessible through the path variable.  Require is a npm way of importing modules into the application. The preffer way of doing it is to use the ES6 syntax.  The commands below show both ways
+
+```JavaScript
+  // npm way of importing a librarry called validator
+  var validator = require('validator');
+
+  // ES6 way of importing the same library
+  import validator from 'validator';
+
+```
+
+### Importing and Exporting named functions/variables
+When using the import keyword you need to specify a relative path with respect of the file importing it.  Only those methods specified as export will be available.  The syntax is  `import './path/file.js'` where the extension ".js" is optional.  In this case you do not need to assign a variable to the import statement as in when using `require`.  The import statement above just loads the file, but to import named exports we need to use `import { namedExport } from './files.js'`
+
+When exporting items from a source file it uses the export keyword.  A very important thing to keep in mind is that the generated object **IS NOT** a dictionary.  For instance to export the 'square' function the export should look `export { square }`.  Notice that even though we are using curly brackets the object is not a key-value pair.  The export can have a default export and multiple named exports.
+The following two ways of exporting square and add methods are equivalent:
+
+```JavaScript
+// in the utils file
+const square = (x) => x * x;
+const add = (x, y) => x + y;
+export { square, add };
+
+// or
+export const square = (x) => x * x;
+export const add = (x, y) => x + y;
+
+// in the app.js file they can be imported as
+import { square, add } from 'utils.js'
+```
+
+### Importing and Exporting default export
+in a single file there can be either none or only one default export.  The following is the same example as the one above with the correct syntax to declare a new 'subtract' function set as the default export:
+
+```JavaScript
+// in the utils file
+const square = (x) => x * x;
+const add = (x, y) => x + y;
+const subtract = (a,b) => a - b;
+export { square, add, subtract as default };
+
+// in the app.js file they can be imported as
+import subtract, { square, add } from 'utils.js'
+```
+Attempting to add the default export in the curly bracket will throw an error as it is not exported (Invalid: `import { square, add, subtract } from 'utils.js'`)
+One advantage of setting a default export is that it can be called anything we want as long as we use the same name.
+
+```JavaScript
+// perfectly valid import statement
+import methodToSubtractTwoValues from 'utils.js'
+methodToSubtractTwoValues(3, 2);
+```
+To create an inline export command we can do it as `export default (a,b) => a - b;`
+
+
+
+## WebPack
+Is a module bundeler.  It also allows to organize JavaScript by createing a single bundle file with all the dependencies and source code.
+To continuously run webpack we can add the '--watch' to the script command so changes in the source files will triggered a new bundle
+It uses a config file that requires:
+* **entry**: where to start looking for dependencies
+* **output**: the name of the bundled file used by the html.  It consists of an object with:
+  * **path**: the absolute path where to store the file.  You can use the __dirname to get the directory name where the webpack.config.js file is located
+  * **filename**:  The actual name of the bundled file
+* **mode**: the running mode or environment such as 'developmet' or 'production'
+* **loader**: functions as the transformer from React to actual javascript.  Babel is an example of a loder.  The loader is part of the module object. The actual configuration is a list of rules and each rule has the loader to use as well as test.  The test attribute determines which files to load ad it could be a regular expression.  The exclude attribute tells the loader not to load those files
+
+When using a loader in the webpack.config.js file we need to pass the presets to the loader.  The way is done in babel is by creating a new file called .babelrc with the presets i.e: `{ "presets": [ 'env', 'react' ] }`
+
+You can add source map as a devtool as debugging tool to find where in the code an error is thrown.  This is desirable because the line number thrown in the console is from the bundled file and not the actual code.  The [devtool values](https://webpack.js.org/configuration/devtool/#src/components/Sidebar/Sidebar.jsx) to user are defined in the webpack page.  What to use is explained below under Development and Production.
+
+More information can be found in the [Webpack Documentation Page](https://webpack.js.org/concepts/).
+
+Babel has a feature under development Stage 2 to make it easier creating classes.  It will remove the need to bind methods when creating new classes as well as other benefits.  More details can be found [here](https://babeljs.io/docs/plugins/transform-class-properties/).  This feature is added to the .babelrc file after installation
+
+
+### WebPack DevServer
+It is used to replace the live-server so we no longer have the need to run two separate commands: live-server and webpack.  WebPack DevServer uses the same webpack.config.js file to launch so the only command needed would be dev-server once is defined in the package.json scripts section i.e: `'dev-derver': 'webpack-dev-server`. 
