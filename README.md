@@ -345,7 +345,7 @@ console.log(newSyntax.getGreeting());
 This functionality is enabled by defining a plugins section and add the desired plugins such as the transform class properties mentioned above (`"plugins": [ "transform-class-properties" ]`)
 
 ### WebPack DevServer
-It is used to replace the live-server so we no longer have the need to run two separate commands: live-server and webpack.  WebPack DevServer uses the same webpack.config.js file to launch so the only command needed would be dev-server once is defined in the package.json scripts section i.e: `'dev-derver': 'webpack-dev-server`. 
+It is used to replace the live-server so we no longer have the need to run two separate commands: live-server and webpack.  WebPack DevServer uses the same webpack.config.js file to launch so the only command needed would be dev-server once is defined in the package.json scripts section i.e: `'dev-derver': 'webpack-dev-server`. Important, if using react-router you need to add the `historyApiFallback: true` to the devServer section in the webpack.config.js file to handle all the requests.
 
 ### WebPack SCSS
 The same way we configured webpack to set babel as the loader for js files, we can do the same for css files.  This time we are using two loaders: css-loader, and syle-loader.  Because we are using more than one the rule inside the rules tag is a little bit different.  We need to replace the 'loader' attribute with 'use' so the new rule looks like `{'use': ['style-loader', 'css-loader'], 'test': /\.css$/ }`
@@ -420,3 +420,14 @@ $desktop-breakpoint: 45rem;
 }
 ```
 The add_option__input is initially configured to render on a small device.  If the viewer's (device) screen is larger than the "$desktop-breakpoint" then the @media gets invoked and it changes some of the css parameters specified above.
+
+# ReactRouter
+Information about react-router can be found in its [homepage](https://reacttraining.com/react-router/web/guides/philosophy).  React router routes http requests to JavaScript functions so they can be handled on the client side.  To enable the dev-server to render all the pages then we need to add the `historyApiFallback: true` to the devServer section in the webpack.config.js file to handle all the requests.
+
+BrowserRoute is expecting to have only one child inside.  That means if we have many routes, which is the whole point, we need to wrap them inside a tag such as `<div>`.
+
+BrowseRouter cares about if the routes starts with the given path.  For instance, if the home path is "/" and the help page is "/help" and the user calls help, both pages will show up because both of them starts with '/'.  To avoid this we set the boolean exact= true on each route we have to.
+
+Switch looks for a match on each of the defines routes until it finds a matching path and stops there.  That means that to create a 404 page the only thing we need to do is to have the not found page as the last route.
+
+Using Links allows the page to route to another pages without the need to refresh the pages.  This is great to route to our own pages faster.
