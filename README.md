@@ -7,12 +7,12 @@ Udemy Course projects
 
 ### Installing Required Software
 * Install Babel
-   * `npm install -g babel-cli`
+   * `npm install babel-cli`
 * Install Babel Presets
   * `npm install --save-dev babel-cli babel-preset-react`
   * `npm install babel-preset-env --save-dev`
 * Installing Live Server
-  * `npm install -g live-server`
+  * `npm install live-server`
 
 
 ### Creating New Project
@@ -138,6 +138,33 @@ The following are the steps used by React to update the component state
  *REMEMBER*: If you have multiple pieces in the state, you do not need to return
  all of them just the ones that needs to be modified
  
+### props.children
+This is an excellent way to pass contents from a parent to a child component.  It contains all the content inside the component name brackets.
+```JavaScript
+const Layout = (props) =>
+{
+  return (
+    <div>
+      <p>Header Here</p>
+      {props.children}
+      <p>Footer Here</p>
+    </div>
+  )
+};
+
+ReactDOM.render( (
+  <Layout>
+    <div>
+      <h1>Page Title</h1>
+      <p>This is my page</p>
+    </div>
+  </Layout>), 
+  document.getElementById('app'));
+```
+The example above shows a component that will display "Header Here" followed by the content passed from the parent (Page Title and This is my page) and ending with Footer Here.
+
+
+
 
 
 ## JavaScript Notes
@@ -207,6 +234,7 @@ The order in which JavaScript files are loaded in the html files is important fo
     <script src="https://unpkg.com/react-dom@16.0.0/umd/react-dom.development.js"></script>
     <script src="/scripts/app.js"></script>
 ```
+
 
 ## Import, Export, Require
 When using require you need to assign it to a variable for example `const path = require('path');`.  In this case all the exported methods in path will be accessible through the path variable.  Require is a npm way of importing modules into the application. The preffer way of doing it is to use the ES6 syntax.  The commands below show both ways
@@ -282,8 +310,113 @@ You can add source map as a devtool as debugging tool to find where in the code 
 
 More information can be found in the [Webpack Documentation Page](https://webpack.js.org/concepts/).
 
-Babel has a feature under development Stage 2 to make it easier creating classes.  It will remove the need to bind methods when creating new classes as well as other benefits.  More details can be found [here](https://babeljs.io/docs/plugins/transform-class-properties/).  This feature is added to the .babelrc file after installation
+#### Babel new class syntax
+Babel has a feature under development Stage 2 to make it easier creating classes.  It will remove the need to bind methods when creating new classes as well as other benefits.  More details can be found [here](https://babeljs.io/docs/plugins/transform-class-properties/).  This feature is added to the .babelrc file after installation.  The following code shows the difference between the old style syntax and the new one.
+```JavaScript
+class OldSyntax
+{
+  constructor(props)
+  {
+    this.name = 'Mike';
+    this.getGreeting = this.getGreeting.bind(this);
+  }
+  getGreeting()
+  {
+    return `Hi. My name is ${this.name}.`;
+  }
+}
 
+const oldSyntax = new OldSyntax();
+console.log(oldSyntax);
+console.log(oldSyntax.getGreeting());
+
+//---------------------------------------------
+
+class NewSyntax
+{
+  name = 'Jen';
+  getGreeting = () => `Hi. My name is ${this.name}.`;
+
+}
+const newSyntax = new NewSyntax();
+console.log(newSyntax);
+console.log(newSyntax.getGreeting());
+```
+This functionality is enabled by defining a plugins section and add the desired plugins such as the transform class properties mentioned above (`"plugins": [ "transform-class-properties" ]`)
 
 ### WebPack DevServer
 It is used to replace the live-server so we no longer have the need to run two separate commands: live-server and webpack.  WebPack DevServer uses the same webpack.config.js file to launch so the only command needed would be dev-server once is defined in the package.json scripts section i.e: `'dev-derver': 'webpack-dev-server`. 
+
+### WebPack SCSS
+The same way we configured webpack to set babel as the loader for js files, we can do the same for css files.  This time we are using two loaders: css-loader, and syle-loader.  Because we are using more than one the rule inside the rules tag is a little bit different.  We need to replace the 'loader' attribute with 'use' so the new rule looks like `{'use': ['style-loader', 'css-loader'], 'test': /\.css$/ }`
+
+To actually use the loader we need to import the CSS files the same way we do with js files `import './styles/styles.css';`.  The new style uses Sass language.  The idea is the same as a js bundler where we import just one css file which references a lot of other files
+
+This is the recommended way to link a style to a component.  As an example I am using the Header component.
+
+1. Create a components directory under styles
+2. Create a new file called _header.scss
+3. Import the header file in the styles.scss (`import './components/header'`)
+4. Open the Header.js file
+5. Modify the outermost tag such as div and set the class name (`<div className="header">`).  Remember that in a React component the attribute is className and not class
+6. In the _header.scss create a new class entry (`.header{} `) where all the styles will live
+
+Once the style sheet is created then is divided into sections with their own style.  The naming convention used is called Block Element Modifier (BEM).  Each BEM defines a classname that starts with the name of the component followed by two underscores and ending with the section (`.header__title`).  Then each section is assigned its own classname using the className attribute
+
+Another naming convention used by BEM is to call modifiers using original name followed by two dashes and a postfix.  For example if we have a class called button with some default settings for all buttons and we want to make some minor changes for another class we would do:
+
+```css
+// Regular buttons
+.button {
+  background: $purple;
+  border: none;
+  border-bottom: .3rem solid darken($purple, 10%);
+  color: white;
+  font-weight: 500;
+  padding: $s-size;
+}
+
+// bem - modifier
+.button--link {
+  background: none;
+  border: none;
+  color: $off-white;
+  padding: 0;
+}
+```
+Then in the actual button we want to change we would set it up as `<button className="button button-link" />`
+
+Different browsers start from a different set of defaults and therefore the application will look different.  To avoid this we set the application to start from a common place using already generated normalization libraries such as normalize-css.  This is added using yarn and to use it we just import it above our import styles.css statement in the app.js.
+
+Is a good practice to use a _settings.scss file to set all common css styles and use that as a reference inside the individual component css styles.
+
+SCSS allows you to use built-in functions and you can find more about the in the [SASS documentation page](http://sass-lang.com/documentation/Sass/Script/Functions.html).
+
+## Mobile Devices Considerations
+The rendering of the page on a mobile device can be tested by clicking the second icon from the left in the Chrome Development Tools.  Once there you can switch to a different devices.  The page might look smaller than it should be so to fix it add `<meta name="viiewport" content="width=device-width, initial-scale=1" />` to the index.html page.
+Some of the css values need to be twiked for better rendering on small devices.  One way of doing it is by using the @media CSS statement.  We can set it up such when something happens, like a value smaller than, some of the css components need to be modified.  For instance:
+
+```css
+$desktop-breakpoint: 45rem;
+
+.add-option__input {
+  background: $dark-blue;
+  border: none;
+  color: $off-white;
+  border-bottom: .3rem solid darken($dark-blue, 10%);
+  flex-grow: 1;
+  margin: 0 0 $s-size 0;
+  padding: $s-size;
+}
+
+@media (min-width: $desktop-breakpoint) {
+  .add-option {
+    flex-direction: row;
+  }
+
+  .add-option__input {
+    margin: 0 $s-size 0 0;
+  }
+}
+```
+The add_option__input is initially configured to render on a small device.  If the viewer's (device) screen is larger than the "$desktop-breakpoint" then the @media gets invoked and it changes some of the css parameters specified above.

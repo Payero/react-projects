@@ -5,45 +5,17 @@ import AddOption from './AddOption';
 import Options from './Options';
 import Header from './Header';
 import Action from './Action';
+import OptionModal from './OptionModal';
 
 
 export default class IndecisionApp extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { options: [] };
-    this.handleDeleteOptions = this.handleDeleteOptions.bind(this);
-    this.handleDeleteOption = this.handleDeleteOption.bind(this);
-    this.handleAddOption = this.handleAddOption.bind(this);
-    this.handlePick = this.handlePick.bind(this);
-  }
+  
+  state = { 
+    options: [], 
+    selectedOption: undefined 
+  };
 
-  // fired when component is loaded in the browser
-  componentDidMount() {
-    try {
-      const json = localStorage.getItem('options');
-      const options = JSON.parse(json);
-      if (options)
-        this.setState(() => ({ options: options }));
-    }
-    catch ({ error }) {
-      // do nothing if the json options is invalid
-    }
-  }
-
-  // fired when component is updated (either props or state)
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.options.length !== this.state.options.length) {
-      const json = JSON.stringify(this.state.options);
-      localStorage.setItem('options', json);
-    }
-  }
-
-  // fired when the component is removed from the DOM
-  componentWillUnmount() {
-    console.log('componentWillMount');
-  }
-
-  handleDeleteOptions() {
+  handleDeleteOptions = () => {
     //                                   args | wrap obj | obj to return | 
     // this can be done as this.setState( () =>  (        { options: [] }  ) )
     // this.setState(() =>
@@ -51,9 +23,9 @@ export default class IndecisionApp extends React.Component {
     //   return { options: [] };
     // });
     this.setState(() => ({ options: [] }));
-  }
+  };
 
-  handleDeleteOption(optionToRemove) {
+  handleDeleteOption = (optionToRemove) => {
     console.log("Deleting Single Option " + optionToRemove);
     this.setState((prevState) => ({
       // If the condition returns true, then that item will remain in the list.  
@@ -61,9 +33,9 @@ export default class IndecisionApp extends React.Component {
         return optionToRemove !== option;
       })
     }));// end of setState
-  }
+  };
 
-  handleAddOption(option) {
+  handleAddOption = (option) => {
     // if is an empty string, return an error message
     // if everything goes well then it returns an 'undefined'
     // else it return an error message to the AddOption object
@@ -80,14 +52,47 @@ export default class IndecisionApp extends React.Component {
     // });
     this.setState((prevState) => ({ options: prevState.options.concat([option]) }));
 
-  }
+  };
 
-  handlePick() {
+  handlePick = () => {
     const rand = Math.floor(Math.random() * this.state.options.length);
     const option = this.state.options[rand];
     console.log("Random Value", option);
-    alert(option);
-  }
+    if(option)
+    {
+      this.setState( () => ({ selectedOption: option }) );
+    }
+  };
+
+  handleClearSelectepOption = () => {
+    this.setState( () => ({ selectedOption: undefined}) );
+  };
+
+  // fired when component is loaded in the browser
+  componentDidMount() {
+    try {
+      const json = localStorage.getItem('options');
+      const options = JSON.parse(json);
+      if (options)
+        this.setState(() => ({ options: options }));
+    }
+    catch ({ error }) {
+      // do nothing if the json options is invalid
+    }
+  };
+
+  // fired when component is updated (either props or state)
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.options.length !== this.state.options.length) {
+      const json = JSON.stringify(this.state.options);
+      localStorage.setItem('options', json);
+    }
+  };
+
+  // fired when the component is removed from the DOM
+  componentWillUnmount() {
+    console.log('componentWillMount');
+  };
 
   render() {
     const title = 'Indecision';
@@ -96,17 +101,25 @@ export default class IndecisionApp extends React.Component {
     return (
       <div>
         <Header title={title} subtitle={subtitle} />
-        <Action
-          hasOptions={this.state.options.length > 0}
-          handlePick={this.handlePick}
-        />
-        <Options
-          options={this.state.options}
-          handleDeleteOptions={this.handleDeleteOptions}
-          handleDeleteOption={this.handleDeleteOption}
-        />
-        <AddOption handleAddOption={this.handleAddOption} />
+        <div className="container">
+          <Action
+            hasOptions={this.state.options.length > 0}
+            handlePick={this.handlePick}
+          />
+          <div className="widget">
+            <Options
+              options={this.state.options}
+              handleDeleteOptions={this.handleDeleteOptions}
+              handleDeleteOption={this.handleDeleteOption}
+            />
+            <AddOption handleAddOption={this.handleAddOption} />
+          </div>
+        </div>
+          
+        <OptionModal 
+          selectedOption={this.state.selectedOption}
+          handleClearSelectepOption={this.handleClearSelectepOption}/>
       </div>
     );
-  }
+  };
 }
