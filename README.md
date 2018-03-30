@@ -431,3 +431,8 @@ BrowseRouter cares about if the routes starts with the given path.  For instance
 Switch looks for a match on each of the defines routes until it finds a matching path and stops there.  That means that to create a 404 page the only thing we need to do is to have the not found page as the last route.
 
 Using Links allows the page to route to another pages without the need to refresh the pages.  This is great to route to our own pages faster.
+
+# Redux
+Redux is a component state management library.  If the application has a single component tree (simple app) form then using regular this.state is sufficient because the data can be managed and pass down from the trunk to the branches and leaves.  In cases where the application consists on more than one tree (complex app) another solution such as Redux is preferred.  Also passing the props down to a component makes the component not reusable and makes the "wiring up" of the components more complicated.
+
+[Redux](https://redux.js.org/) has a lot of use cases and other related information.
