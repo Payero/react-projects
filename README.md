@@ -40,14 +40,66 @@ that is compatible with all the Browsers.  The following command takes the src/a
 
 
 
-
-
 ### Cleaning Project
 * Just delete the node_modules directory, this is being created when running
   npm install
 
 
-## React Notes
+-------------------------------------------------------------------------------
+# JavaScript Notes
+
+
+
+### ES6 Variables Declaration
+Before all the variables were declared as var.  Doing that makes the variable
+global and should be avoid at any cost.  The following is a recommended guideline to declare variables:
+* **const**: Should be the first choice.  Using this declaration means that the variable will not be modified
+* **let**: Should be used to set local scope to a function or set of curly brackets
+* **var**: Last resort as it makes the variable global and is not recommended
+
+One great feature ES6 has is the availability to extract values from an object, take a look at the example below.
+```JavaScript
+const person = {
+  name: 'Oscar',
+  age: 48,
+  location: {
+    city: 'Falls Church',
+    temp: 67
+  }
+};
+
+// const name = person.name;
+// const age = person.age;
+// Setting the variables straight from the person object and setting a default value to name
+const {name = 'Anonymous', age} = person;
+
+console.log(`${name} is ${age}` );
+
+// Renaming the temp variable to temperature from the person.location
+const { city, temp: temperature } = person.location;
+
+if (city && temperature )
+  console.log(`It's ${temperature} in ${city}`);
+
+```
+Instead of getting every value as shown in the commented out lines, ES6 allows you to do it on a simpler way.  The variables can be renamed, set default value, or both (`const {name: firstName = 'Anaonymous'} = person`).  The example before renames the attribute 'name' to 'firstName' and set up a default value of 'Anonymous' if is not defined.
+
+
+### Creating a Random number based on a list
+```JavaScript
+function gerRandomValue(myList)
+{
+  const rand = Math.floor(Math.random() * myList.length);
+  const option = myList[rand];
+
+  return option;
+}
+```
+
+
+
+-------------------------------------------------------------------------------
+# React Notes
 
 To avoid reloading the whole page once an event is triggered call the following function: `event.preventDefault();`
 
@@ -167,26 +219,7 @@ The example above shows a component that will display "Header Here" followed by 
 
 
 
-## JavaScript Notes
 
-### ES6 Variables Declaration
-Before all the variables were declared as var.  Doing that makes the variable
-global and should be avoid at any cost.  The following is a recommended guideline to declare variables:
-* **const**: Should be the first choice.  Using this declaration means that the variable will not be modified
-* **let**: Should be used to set local scope to a function or set of curly brackets
-* **var**: Last resort as it makes the variable global and is not recommended
-
-
-### Creating a Random number based on a list
-```JavaScript
-function gerRandomValue(myList)
-{
-  const rand = Math.floor(Math.random() * myList.length);
-  const option = myList[rand];
-
-  return option;
-}
-```
 ### Initializing React Component Classes
 To properly extend a `React.Component` object the constructor needs to be created as follow:
 ```JavaScript
@@ -435,4 +468,57 @@ Using Links allows the page to route to another pages without the need to refres
 # Redux
 Redux is a component state management library.  If the application has a single component tree (simple app) form then using regular this.state is sufficient because the data can be managed and pass down from the trunk to the branches and leaves.  In cases where the application consists on more than one tree (complex app) another solution such as Redux is preferred.  Also passing the props down to a component makes the component not reusable and makes the "wiring up" of the components more complicated.
 
-[Redux](https://redux.js.org/) has a lot of use cases and other related information.
+[Redux](https://redux.js.org/) has a lot of use cases and other related information.  The state is changed through the use of actions.  Actions are dispatched and the store receives those actions.  To create a store you need to pass a function that will get invoked when an action is dispatched.  The function uses the current state and the action as arguments.  The code below shows a simple example of an INCREMENT, DECREMENT, RESET actions for a counter.  Things to keep in mind when using Redux:
+
+* When creating the store you could pass the default state right in the argument
+* The actions is always capital (INCREMENT) and if more than one word is used then they are separated by an underscore (THE_OTHER)
+* Never change the state or the action, just act on them
+* The attribute 'type' is required by redux, but you can add as many attributes as desired and they will be available in the 'action' object passed to the createStore.
+
+
+```JavaScript
+import  { createStore } from 'redux';
+
+const store = createStore( (state = { count: 0 }, action) => {
+  switch( action.type )
+  {
+    case 'INCREMENT':
+      const incrementBy = typeof action.incrementBy === 'number' ? action.incrementBy : 1;
+      return {
+        count: state.count + incrementBy
+      };
+    case 'DECREMENT':
+      return {
+        count: state.count - 1
+      };
+    case 'RESET':
+      return {
+        count: 0
+      };
+    default:
+      return state;
+  }
+  
+});
+
+console.log(store.getState());
+
+// I'd like to increment the count
+store.dispatch(
+{
+  type: 'INCREMENT',
+
+});
+
+```
+
+Redux allows you to receive changes to the store using the store.subscribe( func ) method call.  When the store changes it invokes the given function.  The return object of the subscribe method is a function you can call to unsubscribe.
+```JavaScript
+  // Subscribing to receive changes
+  const unsubscribe = store.subscribe( () => {
+    console.log( "The store changed", store.getState() );
+  });
+
+  // Unsubscribing using the function return from above
+  unsubscribe();
+```
