@@ -57,7 +57,8 @@ global and should be avoid at any cost.  The following is a recommended guidelin
 * **let**: Should be used to set local scope to a function or set of curly brackets
 * **var**: Last resort as it makes the variable global and is not recommended
 
-One great feature ES6 has is the availability to extract values from an object, take a look at the example below.
+One great feature ES6 has is the availability to extract values from an object, take a look at the example below.  This is called destructuring an object.
+
 ```JavaScript
 const person = {
   name: 'Oscar',
@@ -84,6 +85,50 @@ if (city && temperature )
 ```
 Instead of getting every value as shown in the commented out lines, ES6 allows you to do it on a simpler way.  The variables can be renamed, set default value, or both (`const {name: firstName = 'Anaonymous'} = person`).  The example before renames the attribute 'name' to 'firstName' and set up a default value of 'Anonymous' if is not defined.
 
+You can also destructure an array on a similar way as follow:
+```JavaScript
+// Destructuring an array
+const address = ['1299 S Juniper Street', 'Philadelphia', 'Pennsylvania', '19147'];
+// Getting all of them
+const [street, city, state, zip] = address;
+// Getting only the first two
+const [street2, city2] = address;
+// Skipping street and getting only city and state
+const [, city3, state3] = address;
+// Getting state only
+const [, , state4] = address;
+// Getting state only with default if not defined
+const [, , state4 = 'Virginia'] = address;
+
+```
+The following is a sequence of actions to minimize a function using destructuring.
+```JavaScript
+// 1. Original function. Using an object if passed or creating a default empty object
+const incrementCount = ( payload = {} ) => ({
+    type: 'INCREMENT',
+    incrementBy: typeof payload.incrementBy === 'number' ? payload.incrementBy : 1
+  });
+
+// 2. Using Destructuring to get the incrementBy property off of payload
+const incrementCount = ( { incrementBy } = {} ) => ({
+  type: 'INCREMENT',
+  incrementBy: typeof incrementBy === 'number' ? incrementBy : 1
+});
+
+// 3. Setting the default value so no need to test and assign it
+const incrementCount = ( { incrementBy = 1 } = {} ) => ({
+  type: 'INCREMENT',
+  incrementBy: incrementBy
+});
+
+// 4. If the name of the property and the variable name are the same this can be
+//    simplified as one single attribute
+const incrementCount = ( { incrementBy = 1 }= {} ) => ({
+  type: 'INCREMENT',
+  incrementBy
+});
+
+```
 
 ### Creating a Random number based on a list
 ```JavaScript
@@ -522,3 +567,30 @@ Redux allows you to receive changes to the store using the store.subscribe( func
   // Unsubscribing using the function return from above
   unsubscribe();
 ```
+
+It is a good idea to use Action generators to centralized all the different actions in methods for maintainability purposes. Examples of action generators
+```JavaScript
+const incrementCount = ( { incrementBy = 1 } = {}  ) => ({
+  type: 'INCREMENT',
+  incrementBy
+});
+
+const decrementCount = ( { decrementBy = 1} = {} ) => ({
+  type: 'DECREMENT',
+  decrementBy
+})
+
+const setCount = ( { count } = {} ) => ({
+  type: 'SET',
+  count
+})
+
+const resetCount = ( ) => ({
+  type: 'RESET'
+})
+```
+
+The actions establish what needs to be done, but not how.  Reducers specify the how and are passed in as the function argument in the `createStore( reducer )` function.  The following is a list of key concepts for defining a Reducer:
+
+1. Reducers are pure functions; uses only the arguments passed in and returns a value without changing any of the variables.  It does not rely on anything outside of the function.
+2. Never change state or action
