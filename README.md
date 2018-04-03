@@ -141,8 +141,42 @@ function gerRandomValue(myList)
 }
 ```
 
+The best way to add two arrays (a, b) is to use concat.  `a.concat( b )` returns a new array with both of them without modifying the calling array (in this case a).
 
+#### Using the Spread Operator (...)
+The spread operator "spreads" all the values of an array.  It can be used to add all the items of an array into a new array.
+```JavaScript
+const names = ['One', 'Two', 'Three'];
+// same has the same items as names
+const same = [...names];
+// starts with Zero followed by all the items in names
+const withZero = ['Zero', ...names ];
+// starts with Zero followed by all the items in names ending with Four
+const withZero = ['Zero', ...names, 'Four' ];
+```
 
+Spreading an object is similar to spreading an array.  Babel needs to be configured in order to use the object spreader.  That is done in the .babelrc by adding: transform-object-rest-spread to the plugins section after adding it (yarn add babel-plugin-transform-object-rest-spread)
+```JavaScript
+const user = {
+  name: 'Jen',
+  age: 24
+};
+
+console.log({ 
+  age: 33,
+  ...user,
+  city: 'Falls Church',
+  name: 'Oscar' 
+});
+```
+In the example above the spread operator creates a new object and sets the age as 33. Because the user has the same attribute 'age' it overwrites it with 24 and adds the remaining attributes (in this case just name).  Then the city attribute is added to the new object and the name is overwritten to 'Oscar' so the final object looks like:
+```JSON
+{
+  "age": 24,
+  "name": "Oscar",
+  "city": "Falls Church"
+}
+```
 -------------------------------------------------------------------------------
 # React Notes
 
@@ -594,3 +628,69 @@ The actions establish what needs to be done, but not how.  Reducers specify the 
 
 1. Reducers are pure functions; uses only the arguments passed in and returns a value without changing any of the variables.  It does not rely on anything outside of the function.
 2. Never change state or action
+
+Creating and using a reducer:
+```JavaScript
+const countReducer = (state = { count: 0 }, action) => {
+  switch( action.type )
+  {
+    case 'INCREMENT':
+      return {
+        count: state.count + action.incrementBy
+      };
+    case 'DECREMENT':
+      return {
+        count: state.count - action.decrementBy
+      };
+    case 'RESET':
+      return {
+        count: 0
+      };
+    case 'SET':
+      return {
+        count: action.count
+      };
+    default:
+      return state;
+  }
+  
+};
+
+const store = createStore( countReducer );
+```
+If the Store requires a very complex Reducer, then we can split the code into multiple reducers and use the combineReducer function to create the store. See the following code showing how to do it
+
+```JavaScript
+// Expenses Reducer
+const expensesReducer = ( state = [], action ) => {
+    switch( action.type ) {
+        default:
+        return state;
+    }
+};
+
+
+// Filters Reducer
+const filtersReducerDefaultState = {
+    text: '',
+    sortBy: 'date',
+    startDate: undefined,
+    endDate: undefined
+};
+
+const filtersReducer = (state = filtersReducerDefaultState, action) => {
+    switch (action.type) {
+        default:
+            return state;
+    }
+};
+
+
+// Creating Store
+const store = createStore( 
+    combineReducers( {
+        expenses: expensesReducer,
+        filters: filtersReducer
+    }) 
+);
+```
