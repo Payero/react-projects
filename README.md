@@ -694,3 +694,27 @@ const store = createStore(
     }) 
 );
 ```
+### Higher Order Component
+Refers to a React component that renders another component.  It is mainly used to reuse code, render hijacking, props manipulation, and to abstract state.  For instance, if you need to add a text before rendering different types of Components you can wrap them within a HOC.  To pass all the key-value attributes down to the child component you can use the expand oparator `{...props}`.  Without expanding the props variable the inner component will not have access to the props.
+
+```JavaScript
+const Info = (props) => (
+  <div>
+    <h1>Info</h1>
+    <p>The info is: {props.info}</p>
+  </div>
+);
+
+// this is the HOC (WrappedComponent)
+const withAdminWarning = (WrappedComponent) => {
+  return (props) => (
+    <div>
+      {props.isAdmin && <p>This is private info please don't share</p> }
+      <WrappedComponent {...props} />
+    </div>
+  );
+};
+
+const AdminInfo = withAdminWarning(Info);
+ReactDOM.render(<AdminInfo isAdmin={true} info="These are the details" />, document.getElementById('app'));
+```
