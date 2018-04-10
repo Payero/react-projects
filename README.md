@@ -162,11 +162,11 @@ const user = {
   age: 24
 };
 
-console.log({ 
+console.log({
   age: 33,
   ...user,
   city: 'Falls Church',
-  name: 'Oscar' 
+  name: 'Oscar'
 });
 ```
 In the example above the spread operator creates a new object and sets the age as 33. Because the user has the same attribute 'age' it overwrites it with 24 and adds the remaining attributes (in this case just name).  Then the city attribute is added to the new object and the name is overwritten to 'Oscar' so the final object looks like:
@@ -177,6 +177,23 @@ In the example above the spread operator creates a new object and sets the age a
   "city": "Falls Church"
 }
 ```
+
+### Quick REGEX Note
+If we use the expression "^\d*(\.\d{0,2})?$" then:
+
+* ^ asserts position at start of the string
+* \d* matches a digit (equal to [0-9])
+* \* Quantifier — Matches between zero and unlimited times, as many times as possible, giving back as needed (greedy)
+* 1st Capturing Group (\.\d{0,2})?
+* ? Quantifier — Matches between zero and one times, as many times as possible, giving back as needed (greedy)
+* \. matches the character . literally (case sensitive)
+* \d{0,2} matches a digit (equal to [0-9])
+* {0,2} Quantifier — Matches between 0 and 2 times, as many times as possible, giving back as needed (greedy)
+* $ asserts position at the end of the string, or before the line terminator right at the end of the string (if any)
+
+
+You can create and test all the regular expressions in this [great site](https://www.regex101.com)
+
 -------------------------------------------------------------------------------
 # React Notes
 
@@ -263,12 +280,12 @@ The following are the steps used by React to update the component state
 3. Change state based on event such as click button
 4. Component re-rendered using new state values *
 5. Start again at step 3
- 
+
  (*) means that was automatic
-  
+
  *REMEMBER*: If you have multiple pieces in the state, you do not need to return
  all of them just the ones that needs to be modified
- 
+
 ### props.children
 This is an excellent way to pass contents from a parent to a child component.  It contains all the content inside the component name brackets.
 ```JavaScript
@@ -289,7 +306,7 @@ ReactDOM.render( (
       <h1>Page Title</h1>
       <p>This is my page</p>
     </div>
-  </Layout>), 
+  </Layout>),
   document.getElementById('app'));
 ```
 The example above shows a component that will display "Header Here" followed by the content passed from the parent (Page Title and This is my page) and ending with Footer Here.
@@ -577,7 +594,7 @@ const store = createStore( (state = { count: 0 }, action) => {
     default:
       return state;
   }
-  
+
 });
 
 console.log(store.getState());
@@ -653,7 +670,7 @@ const countReducer = (state = { count: 0 }, action) => {
     default:
       return state;
   }
-  
+
 };
 
 const store = createStore( countReducer );
@@ -687,13 +704,55 @@ const filtersReducer = (state = filtersReducerDefaultState, action) => {
 
 
 // Creating Store
-const store = createStore( 
+const store = createStore(
     combineReducers( {
         expenses: expensesReducer,
         filters: filtersReducer
-    }) 
+    })
 );
 ```
+
+### React-Redux
+Library used to connect React components to a single Store.  It expors two methods: Provider and connect.  Provider is used to setup the store and is loaded with the very first, high order component.  Then any component that needs access to the store uses connect.
+
+```JavaScript
+import { connect, Provider } from 'react-redux';
+
+const ExpenseList = (props) => (
+  <div>
+    <h1>Expense List</h1>
+    {props.filters.text}
+    {props.expenses.length}
+  </div>
+);
+
+// as the store changes, this is called and the state is updated which
+// updates the values here
+const mapStateToProps = (state) => {
+  return {
+    expenses: state.expenses,
+    filters: state.filters
+  };
+};
+
+// The connect returns a function that needs to be called with the component
+// so a High Order Component can be created.  In this case ExpenseList
+export default connect( mapStateToProps )(ExpenseList);
+
+
+
+const store = configureStore();
+
+const jsx = (
+  <Provider store = { store }>
+    <AppRouter />
+  </Provider>
+);
+
+ReactDOM.render( jsx, document.getElementById('app'));
+```
+
+
 ### Higher Order Component
 Refers to a React component that renders another component.  It is mainly used to reuse code, render hijacking, props manipulation, and to abstract state.  For instance, if you need to add a text before rendering different types of Components you can wrap them within a HOC.  To pass all the key-value attributes down to the child component you can use the expand oparator `{...props}`.  Without expanding the props variable the inner component will not have access to the props.
 
