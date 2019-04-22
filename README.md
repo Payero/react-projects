@@ -194,6 +194,10 @@ If we use the expression "^\d*(\.\d{0,2})?$" then:
 
 You can create and test all the regular expressions in this [great site](https://www.regex101.com)
 
+### Date Picker
+[momentjs](http://www.momentjs.com) is a well known date and time package.  Another useful tool is provided by airbnb [react-dates](https://github.com/airbnb/react-dates).  The built in object Date is painful to use and that is why is recommended to use a different library such as moment.  Use the Docs in the moment.com web site it has plenty of examples.
+
+
 -------------------------------------------------------------------------------
 # React Notes
 
