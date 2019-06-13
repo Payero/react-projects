@@ -4,13 +4,18 @@
   "main": "index.js",
   "author": "Oscar E. Ganteaume",
   "license": "MIT",
+  "description": "Simple web application used to learn React",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Payero/react-projects.git"
+  },
   "scripts": {
     "serve": "live-server public/",
     "build": "webpack",
     "dev-server": "webpack-dev-server"
   },
   "devDependencies": {
-    "babel-cli": "6.24.1",
+    "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1"
   },
@@ -18,7 +23,7 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
-    "css-loader": "^0.28.11",
+    "css-loader": "^3.0.0",
     "live-server": "^1.2.0",
     "node-sass": "^4.8.3",
     "normalize-css": "^2.3.1",
@@ -29,7 +34,7 @@
     "style-loader": "^0.20.3",
     "validator": "9.4.1",
     "webpack": "4.0.0",
-    "webpack-cli": "^2.0.13",
+    "webpack-cli": "^3.3.4",
     "webpack-dev-server": "^3.1.1"
   }
 }
