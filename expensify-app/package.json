@@ -19,7 +19,7 @@
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "css-loader": "^0.28.11",
-    "live-server": "^1.2.0",
+    "live-server": "^1.2.2",
     "moment": "^2.22.1",
     "node-sass": "^4.8.3",
     "normalize-css": "^2.3.1",
